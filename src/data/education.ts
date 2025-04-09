@@ -4,30 +4,35 @@ export interface Education {
   field: string;
   institution: string;
   location: string;
+  ongoing?: boolean;
   startYear: number;
   endYear: number | null;
-  gpa?: string;
-  coursework: string[];
 }
 
-export const education: Education = {
-  degree: 'Bachelor of Science',
-  field: 'Information Systems',
-  institution: 'University of Technology',
-  location: 'Paris, France',
-  startYear: 2021,
-  endYear: 2024,
-  gpa: '3.85/4.0',
-  coursework: [
-    'Database Management Systems',
-    'Web Application Development',
-    'Cybersecurity Fundamentals',
-    'Enterprise Architecture',
-    'Software Engineering',
-    'Data Analytics',
-    'Network Security',
-    'Cloud Computing',
-    'Information Systems Analysis',
-    'Project Management',
-  ],
-};
+export const educations: Education[] = [
+  {
+    degree: 'Master\'s Degree',
+    field: 'Information Systems Engineering',
+    institution: 'Faculty of Sciences Semlalia of Marrakech',
+    location: 'Marrakech, Morocco',
+    ongoing: true,
+    startYear: 2024,
+    endYear: 2026,
+  },
+  {
+    degree: 'Professional Bachelor',
+    field: 'Information Systems and Networks Engineering',
+    institution: 'Higher School of Technology',
+    location: 'Safi, Morocco',
+    startYear: 2021,
+    endYear: 2024,
+  },
+  {
+    degree: 'University Diploma of Technology (DUT)',
+    field: 'Computer Engineering and Information Systems Administration',
+    institution: 'Higher School of Technology',
+    location: 'Safi, Morocco',
+    startYear: 2021,
+    endYear: 2023,
+  }
+];

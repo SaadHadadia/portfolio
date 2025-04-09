@@ -45,26 +45,20 @@ const ContactSection: React.FC = () => {
     { 
       icon: <Mail size={20} />, 
       label: 'Email', 
-      href: 'mailto:your.email@example.com',
+      href: 'mailto:saad.hadadia9@gmail.com',
       color: 'bg-secondary'
     },
     { 
       icon: <Github size={20} />, 
       label: 'GitHub', 
-      href: 'https://github.com/yourusername',
+      href: 'https://github.com/saadhadadia',
       color: 'bg-[#181717]/10 text-[#181717] dark:text-white dark:bg-[#181717]/20'
     },
     { 
       icon: <Linkedin size={20} />, 
       label: 'LinkedIn', 
-      href: 'https://linkedin.com/in/yourusername',
+      href: 'https://linkedin.com/in/saadhadadia',
       color: 'bg-[#0A66C2]/10 text-[#0A66C2] dark:text-[#0A66C2]'
-    },
-    { 
-      icon: <Twitter size={20} />, 
-      label: 'Twitter/X', 
-      href: 'https://twitter.com/yourusername',
-      color: 'bg-[#1DA1F2]/10 text-[#1DA1F2] dark:text-[#1DA1F2]'
     },
   ];
   

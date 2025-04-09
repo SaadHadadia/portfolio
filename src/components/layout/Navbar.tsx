@@ -39,39 +39,45 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-    <header 
+    <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled ? 'bg-background/80 backdrop-blur-md shadow-sm' : 'bg-transparent'
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        scrolled
+          ? "bg-background/80 backdrop-blur-md shadow-sm"
+          : "bg-transparent"
       )}
     >
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="#home" className="text-xl font-bold">Portfolio</a>
-        
+        <a href="/" className="text-xl font-bold">
+          Saad HADADIA
+        </a>
+
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-foreground/80 hover:text-foreground transition-colors"
+              className="text-foreground/80 hover:text-foreground transition-colors font-bold"
             >
               {link.label}
             </a>
           ))}
         </nav>
-        
+
         {/* Theme & Language Controls */}
         <div className="flex items-center space-x-3">
           <button
             onClick={toggleTheme}
             className="p-2 rounded-full hover:bg-accent transition-colors"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+            }
           >
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-          
+
           <div className="relative group">
             <button
               className="p-2 rounded-full hover:bg-accent transition-colors"
@@ -79,15 +85,15 @@ const Navbar: React.FC = () => {
             >
               <Languages size={20} />
             </button>
-            
+
             <div className="absolute top-full right-0 mt-1 bg-background border border-border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-32">
               {languageOptions.map((option) => (
                 <button
                   key={option.code}
                   onClick={() => setLanguage(option.code as any)}
                   className={cn(
-                    'px-4 py-2 text-sm text-start w-full hover:bg-accent/50 transition-colors',
-                    language === option.code ? 'font-bold bg-accent/30' : ''
+                    "px-4 py-2 text-sm text-start w-full hover:bg-accent/50 transition-colors",
+                    language === option.code ? "font-bold bg-accent/30" : ""
                   )}
                 >
                   {option.label}
@@ -95,18 +101,18 @@ const Navbar: React.FC = () => {
               ))}
             </div>
           </div>
-          
+
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
             className="p-2 md:hidden rounded-full hover:bg-accent transition-colors"
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
-      
+
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 bg-background/95 z-40 pt-16">

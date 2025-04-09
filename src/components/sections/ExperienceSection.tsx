@@ -30,7 +30,7 @@ const ExperienceSection: React.FC = () => {
                 <div className="absolute left-0 md:left-1/2 w-5 h-5 rounded-full bg-primary transform -translate-x-2 md:-translate-x-2.5 translate-y-6"></div>
                 
                 {/* Content */}
-                <div className="md:w-1/2 md:px-8 pl-8 md:pl-0">
+                <div className="md:w-1/2 md:px-8 pl-8 pr-0">
                   <div className="bg-card border border-border rounded-xl p-6 card-hover">
                     <h3 className="text-xl font-semibold">{experience.role}</h3>
                     <h4 className="text-lg text-primary">{experience.company}</h4>

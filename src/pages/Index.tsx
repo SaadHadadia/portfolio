@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import Links from '@/components/layout/Links';
 import HeroSection from '@/components/sections/HeroSection';
 import AboutSection from '@/components/sections/AboutSection';
 import SkillsSection from '@/components/sections/SkillsSection';
@@ -44,6 +45,7 @@ const Index = () => {
       <LanguageProvider>
         <div className="flex flex-col min-h-screen">
           <Navbar />
+          <Links />
           
           <main className="flex-1">
             <HeroSection />
