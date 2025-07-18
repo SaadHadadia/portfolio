@@ -48,7 +48,7 @@ const SkillsSection: React.FC = () => {
         </div>
 
         {/* Skills Canvas */}
-        <div className="relative h-[300px] md:h-[400px] border border-border rounded-xl overflow-hidden bg-background/50 backdrop-blur-sm">
+        <div className="relative h-[400px] md:h-[400px] border border-border rounded-xl overflow-hidden bg-background/50 backdrop-blur-sm">
           <DraggableSkill skills={filteredSkills} />
         </div>
       </div>
