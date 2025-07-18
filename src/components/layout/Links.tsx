@@ -40,7 +40,7 @@ const Links: React.FC = () => {
         </div>
       </a>
       <a
-        href="https://github.com/in/saadhadadia"
+        href="https://github.com/saadhadadia"
         target="_blank"
         rel="noopener noreferrer"
       >

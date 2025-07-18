@@ -1,152 +1,231 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
-interface DraggableSkillProps {
+interface Skill {
   name: string;
   image: string;
-  initialX?: number;
-  initialY?: number;
-  size?: 'sm' | 'md' | 'lg';
+  category: "language" | "framework" | "technology";
   color?: string;
 }
 
-const DraggableSkill: React.FC<DraggableSkillProps> = ({
-  name,
-  image,
-  initialX = 0,
-  initialY = 0,
-  size = 'md',
-  color,
-}) => {
-  const [position, setPosition] = useState({ x: initialX, y: initialY });
-  const [isDragging, setIsDragging] = useState(false);
-  const [floatOffset, setFloatOffset] = useState({ x: Math.random() * 10 - 5, y: Math.random() * 10 - 5 });
-  
-  const skillRef = useRef<HTMLDivElement>(null);
-  const dragStartPos = useRef({ x: 0, y: 0 });
+interface DraggableSkillProps {
+  skills: Skill[];
+}
+
+const DraggableSkill: React.FC<DraggableSkillProps> = ({ skills }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [objects, setObjects] = useState<any[]>([]);
+  const [containerSize, setContainerSize] = useState({
+    width: 800,
+    height: 400,
+  });
 
-  const sizeClasses = {
-    sm: 'w-12 h-12',
-    md: 'w-16 h-16',
-    lg: 'w-20 h-20',
-  };
+  const OBJECT_SIZE = 60;
 
-  // Initialize with random position if not provided
+  // Initialize objects with random positions and velocities
   useEffect(() => {
-    if (containerRef.current && (initialX === 0 && initialY === 0)) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const randomX = Math.random() * (containerRect.width - 80);
-      const randomY = Math.random() * (containerRect.height - 80);
-      setPosition({ x: randomX, y: randomY });
-    }
-    
-    // Random animation delay
-    const delay = Math.random() * 2;
-    if (skillRef.current) {
-      skillRef.current.style.animationDelay = `${delay}s`;
-    }
-  }, [initialX, initialY]);
+    const newObjects = skills.map((skill, i) => ({
+      id: i,
+      skill: skill,
+      x: Math.random() * (containerSize.width - OBJECT_SIZE),
+      y: Math.random() * (containerSize.height - OBJECT_SIZE),
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      isDragging: false,
+    }));
+    setObjects(newObjects);
+  }, [skills]);
 
-  // Handle mouse/touch events
-  const handleDragStart = (clientX: number, clientY: number) => {
-    setIsDragging(true);
-    dragStartPos.current = {
-      x: clientX - position.x,
-      y: clientY - position.y,
+  // Physics simulation
+  useEffect(() => {
+    if (objects.length === 0) return;
+
+    const animate = () => {
+      setObjects((prevObjects) => {
+        const newObjects = prevObjects.map((obj) => {
+          if (obj.isDragging) return obj;
+
+          let newX = obj.x + obj.vx;
+          let newY = obj.y + obj.vy;
+          let newVx = obj.vx;
+          let newVy = obj.vy;
+
+          // Boundary collision
+          if (newX <= 0 || newX >= containerSize.width - OBJECT_SIZE) {
+            newVx = -newVx;
+            newX = Math.max(
+              0,
+              Math.min(containerSize.width - OBJECT_SIZE, newX)
+            );
+          }
+          if (newY <= 0 || newY >= containerSize.height - OBJECT_SIZE) {
+            newVy = -newVy;
+            newY = Math.max(
+              0,
+              Math.min(containerSize.height - OBJECT_SIZE, newY)
+            );
+          }
+
+          return {
+            ...obj,
+            x: newX,
+            y: newY,
+            vx: newVx,
+            vy: newVy,
+          };
+        });
+
+        // Object-to-object collision detection
+        for (let i = 0; i < newObjects.length; i++) {
+          for (let j = i + 1; j < newObjects.length; j++) {
+            const obj1 = newObjects[i];
+            const obj2 = newObjects[j];
+
+            if (obj1.isDragging || obj2.isDragging) continue;
+
+            const dx = obj1.x - obj2.x;
+            const dy = obj1.y - obj2.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < OBJECT_SIZE) {
+              // Calculate collision response
+              const overlap = OBJECT_SIZE - distance;
+              const separationX = (dx / distance) * overlap * 0.5;
+              const separationY = (dy / distance) * overlap * 0.5;
+
+              // Separate objects
+              newObjects[i].x += separationX;
+              newObjects[i].y += separationY;
+              newObjects[j].x -= separationX;
+              newObjects[j].y -= separationY;
+
+              // Exchange velocities (elastic collision)
+              const tempVx = newObjects[i].vx;
+              const tempVy = newObjects[i].vy;
+              newObjects[i].vx = newObjects[j].vx;
+              newObjects[i].vy = newObjects[j].vy;
+              newObjects[j].vx = tempVx;
+              newObjects[j].vy = tempVy;
+            }
+          }
+        }
+
+        return newObjects;
+      });
     };
-  };
 
-  const handleDragMove = (clientX: number, clientY: number) => {
-    if (isDragging && containerRef.current) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const skillRect = skillRef.current?.getBoundingClientRect();
-      
-      if (skillRect) {
-        const newX = clientX - dragStartPos.current.x;
-        const newY = clientY - dragStartPos.current.y;
-        
-        // Keep the skill within the container bounds
-        const boundedX = Math.max(0, Math.min(newX, containerRect.width - skillRect.width));
-        const boundedY = Math.max(0, Math.min(newY, containerRect.height - skillRect.height));
-        
-        setPosition({ x: boundedX, y: boundedY });
+    const interval = setInterval(animate, 16); // ~60fps
+    return () => clearInterval(interval);
+  }, [objects.length, containerSize]);
+
+  // Update container size on resize
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerSize({ width: rect.width, height: rect.height });
       }
-    }
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
-  };
-
-  // Mouse events
-  const handleMouseDown = (e: React.MouseEvent) => {
-    handleDragStart(e.clientX, e.clientY);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    handleDragMove(e.clientX, e.clientY);
-  };
-
-  const handleMouseUp = () => {
-    handleDragEnd();
-  };
-
-  // Touch events
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    handleDragStart(touch.clientX, touch.clientY);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    handleDragMove(touch.clientX, touch.clientY);
-  };
-
-  const handleTouchEnd = () => {
-    handleDragEnd();
-  };
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove as unknown as EventListener);
-      window.addEventListener('mouseup', handleMouseUp);
-      window.addEventListener('touchmove', handleTouchMove as unknown as EventListener, { passive: false });
-      window.addEventListener('touchend', handleTouchEnd);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove as unknown as EventListener);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchmove', handleTouchMove as unknown as EventListener);
-      window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isDragging]);
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+  const handleDragStart = (id: number) => {
+    setObjects((prev) =>
+      prev.map((obj) => (obj.id === id ? { ...obj, isDragging: true } : obj))
+    );
+  };
+
+  const handleDragEnd = (id: number) => {
+    setObjects((prev) =>
+      prev.map((obj) => (obj.id === id ? { ...obj, isDragging: false } : obj))
+    );
+  };
+
+  const handleDrag = (id: number, info: any) => {
+    setObjects((prev) =>
+      prev.map((obj) =>
+        obj.id === id
+          ? {
+              ...obj,
+              x: Math.max(
+                0,
+                Math.min(
+                  containerSize.width - OBJECT_SIZE,
+                  info.point.x - OBJECT_SIZE / 2
+                )
+              ),
+              y: Math.max(
+                0,
+                Math.min(
+                  containerSize.height - OBJECT_SIZE,
+                  info.point.y - OBJECT_SIZE / 2
+                )
+              ),
+              vx: info.velocity.x * 0.01,
+              vy: info.velocity.y * 0.01,
+            }
+          : obj
+      )
+    );
+  };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div>
       <div
-        ref={skillRef}
-        className={cn(
-          'absolute cursor-grab select-none rounded-lg flex flex-col items-center justify-center p-2 transition-shadow duration-300',
-          sizeClasses[size],
-          isDragging ? 'cursor-grabbing shadow-lg z-50' : 'animate-float z-10'
-        )}
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          backgroundColor: color || 'transparent',
-        }}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
+        ref={containerRef}
+        className="relative w-full h-full rounded-lg overflow-hidden"
+        style={{ height: "400px" }}
       >
-        <div className="w-full h-full relative">
-          <img 
-            src={image} 
-            alt={name} 
-            className="w-full h-full object-contain drag-none pointer-events-none" 
-          />
-        </div>
-        <div className="text-xs font-medium mt-1 opacity-80 whitespace-nowrap">{name}</div>
+
+        {/* Floating skill objects */}
+        {objects.map((obj) => (
+          <motion.div
+            key={obj.id}
+            className="absolute cursor-grab active:cursor-grabbing"
+            style={{
+              width: OBJECT_SIZE,
+              height: OBJECT_SIZE,
+            }}
+            animate={{
+              x: obj.x,
+              y: obj.y,
+            }}
+            transition={{
+              type: "tween",
+              duration: 0.016,
+              ease: "linear",
+            }}
+            drag
+            dragConstraints={containerRef}
+            dragElastic={0}
+            onDragStart={() => handleDragStart(obj.id)}
+            onDragEnd={() => handleDragEnd(obj.id)}
+            onDrag={(event, info) => handleDrag(obj.id, info)}
+            whileHover={{ scale: 1.05 }}
+            whileDrag={{ scale: 1.1, zIndex: 10 }}
+          >
+            <div
+              className="w-full h-full rounded-lg shadow-lg border-2 border-white/30 flex flex-col items-center justify-center p-2 transition-shadow duration-300"
+              style={{
+                backgroundColor: obj.skill.color || "rgba(255, 255, 255, 0.1)",
+              }}
+            >
+              <div className="w-8 h-8 mb-1">
+                <img
+                  src={obj.skill.image}
+                  alt={obj.skill.name}
+                  className="w-full h-full object-contain drag-none pointer-events-none"
+                />
+              </div>
+              <div className="text-xs font-medium text-white/90 text-center leading-tight">
+                {obj.skill.name}
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
