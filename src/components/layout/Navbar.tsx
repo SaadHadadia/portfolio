@@ -23,19 +23,20 @@ const Navbar: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { href: '#home', label: t('home') },
-    { href: '#about', label: t('about') },
-    { href: '#skills', label: t('skills') },
-    { href: '#projects', label: t('projects') },
-    { href: '#experience', label: t('experience') },
-    { href: '#education', label: t('education') },
-    { href: '#contact', label: t('contact') },
+    { href: "#home", label: t("home") },
+    { href: "#about", label: t("about") },
+    { href: "#skills", label: t("skills") },
+    { href: "#projects", label: t("projects") },
+    { href: "#experience", label: t("experience") },
+    { href: "#education", label: t("education") },
+    { href: "#certifications", label: "certifications" },
+    { href: "#contact", label: t("contact") },
   ];
 
   const languageOptions = [
     { code: 'en', label: 'English' },
     { code: 'fr', label: 'Français' },
-    { code: 'ar', label: 'العربية' },
+    // { code: 'ar', label: 'العربية' },
   ];
 
   return (

@@ -12,6 +12,7 @@ import ProjectsSection from '@/components/sections/ProjectsSection';
 import ExperienceSection from '@/components/sections/ExperienceSection';
 import EducationSection from '@/components/sections/EducationSection';
 import ContactSection from '@/components/sections/ContactSection';
+import CertificationsSection from '@/components/sections/CertificationsSection';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState<string>('hero');
@@ -54,6 +55,7 @@ const Index = () => {
             <ProjectsSection />
             <ExperienceSection />
             <EducationSection />
+            <CertificationsSection />
             <ContactSection />
           </main>
           

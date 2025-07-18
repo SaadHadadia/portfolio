@@ -34,15 +34,6 @@ const AboutSection: React.FC = () => {
             <p className="text-lg">
               When I'm not coding, you can find me exploring new technologies, participating in hackathons, or contributing to open-source projects.
             </p>
-            
-            <div className="pt-4">
-              <h3 className="text-xl font-semibold mb-3">Certifications</h3>
-              <ul className="list-disc list-inside space-y-2">
-                <li>AWS Certified Cloud Practitioner</li>
-                <li>Oracle Certified Associate - Java Programmer</li>
-                <li>CompTIA Security+</li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
